@@ -1099,9 +1099,9 @@ payoff_df_new = pd.DataFrame({
 MAX_ROWS_DISPLAY = 5000
 payoff_sample_df_new = payoff_df_new.head(MAX_ROWS_DISPLAY)
 
-payoff_sample_df_new = payoff_sample_df_new.applymap(lambda x: f"{x:.2f}")
+payoff_sample_df_new = payoff_sample_df_new.map(lambda x: f"{x:.2f}")
 
-styled_payoff_df_new = payoff_sample_df_new.style.applymap(
+styled_payoff_df_new = payoff_sample_df_new.style.map(
     lambda x: 'background-color: #ffcccb' if float(x) > 0 else '', subset=["Total Payoff"]
 )
 
@@ -1592,7 +1592,7 @@ with col1:
             return ""
 
     # Display table with styling
-    st.dataframe(df_pricing.style.applymap(highlight_changes, subset=["Change (%)"]), use_container_width=True)
+    st.dataframe(df_pricing.style.map(highlight_changes, subset=["Change (%)"]), use_container_width=True)
 
 with col2:
     st.markdown("<div style='font-size:20px; font-weight:bold;'>💰 Final Product Price in 1 year</div>", unsafe_allow_html=True)
