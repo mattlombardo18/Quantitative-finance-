@@ -4,28 +4,7 @@
 Created on Sat Jan 25 12:44:34 2025
 
 @author: matthieulombardo
-"""
-import subprocess
-import sys
-
-def install_if_needed(package):
-    try:
-        __import__(package)
-    except ImportError:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-
-# Liste des packages à vérifier et installer si nécessaire
-packages = {
-    "streamlit": "streamlit",
-    "numpy": "numpy",
-    "matplotlib": "matplotlib",
-    "scipy": "scipy",
-    "pandas": "pandas"
-}
-
-for module, package in packages.items():
-    install_if_needed(package)
-    
+"""   
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
