@@ -57,6 +57,29 @@ with st.sidebar:
 
         Participation = 0.5
 
+
+# Ajout du titre et de l'information sur les créateurs en haut à droite
+st.markdown("""
+    <style>
+        .top-right {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            font-size: 14px;
+            color: black;
+            font-weight: bold;
+        }
+    </style>
+    <div class="top-right">
+        Projet créé par :<br>
+        Mathis Delooze, Matthieu Lombardo et Youri Leconte
+    </div>
+""", unsafe_allow_html=True)
+
 # =============================================================================
 # Option Breakdown Table
 # =============================================================================
