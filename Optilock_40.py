@@ -5,8 +5,6 @@ Created on Tue Feb 18 17:49:45 2025
 
 @author: mathisdelooze
 """
-
-
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
@@ -17,9 +15,6 @@ from scipy.stats import gaussian_kde
 from scipy.stats import norm
 from scipy.interpolate import RegularGridInterpolator
 
-
-
-
 # =============================================================================
 # Streamlit Interface Setup
 # =============================================================================
@@ -27,7 +22,6 @@ st.set_page_config(page_title="OptiLock 40 - Monte Carlo Pricing", layout="wide"
 
 st.markdown("""
     <h1 style='text-align: center;'>🔒 OptiLock 40 - Monte Carlo Pricing Dashboard</h1>
-    <h3 style='text-align: center;'>Capital Protection & Market Participation</h3>
     <h4 style='text-align: center; color:gray;'>Combining Capital Security with Market Growth Potential</h4>
     <hr style='border: 1px solid #555;'>
 """, unsafe_allow_html=True)
@@ -51,7 +45,7 @@ with st.sidebar:
         T = st.number_input("Maturity (Years)", value=3, min_value=1, max_value=10)
         NSimul = st.number_input("Number of Simulations", value=10000, min_value=1000, max_value=500000, step=10000)
 
-    with st.expander("📏 Barrier & Participation Settings", expanded=True):
+    with st.expander("🔹 Barrier & Participation Settings", expanded=True):
         barrier_10_pct = st.slider("Barrier Level 1 (%)", min_value=100, max_value=200, value=120, step=1)
         barrier_25_pct = st.slider("Barrier Level 2 (%)", min_value=100, max_value=300, value=150, step=1)
 
@@ -67,13 +61,10 @@ with st.sidebar:
 
         Participation = 0.5
 
-
-
-
 # =============================================================================
 # Option Breakdown Table
 # =============================================================================
-st.markdown("<h3>📜 Option Composition of OptiLock 40</h3>", unsafe_allow_html=True)
+st.markdown("<h3> Option Composition of OptiLock 40</h3>", unsafe_allow_html=True)
 
 options_table = pd.DataFrame({
     "Option Type": ["Vanilla Call Option", "One-Touch Digital Option", "One-Touch Digital Option", "Knock-Out Call Option", "Knock-Out Call Option"],
@@ -104,11 +95,10 @@ st.markdown("---")
 # Volatility Surface
 # =============================================================================
 
-# Define strike percentages and maturities (in years)
 strike_percentages = np.array([50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200])
 maturities = np.array([1/12, 3/12, 6/12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])  # In years
 
-# Volatility matrix (converted to decimal format)
+# Volatility matrix
 vol_matrix = np.array([
     [68.7, 53.6, 46.0, 38.9, 34.4, 32.6, 32.3, 32.0, 31.8, 31.7, 31.6, 31.6, 31.6],
     [60.5, 48.4, 42.2, 36.4, 32.8, 31.5, 31.3, 31.2, 31.1, 31.1, 31.1, 31.2, 31.1],
@@ -131,11 +121,9 @@ vol_matrix = np.array([
 # Create an interpolator function
 vol_interpolator = RegularGridInterpolator((strike_percentages, maturities), vol_matrix, method='linear')
 
-# Create meshgrid for visualization
 strike_mesh, maturity_mesh = np.meshgrid(strike_percentages, maturities, indexing='ij')
 vol_surface_values = vol_interpolator((strike_mesh, maturity_mesh))
 
-# Create a 3D surface plot using Plotly
 fig = go.Figure(data=[go.Surface(
     z=vol_surface_values, 
     x=strike_mesh, 
@@ -153,11 +141,9 @@ fig.update_layout(
     height=600
 )
 
-# Streamlit integration
-st.markdown("## 📊 Volatility Surface")
+st.markdown("<h3> Volatility Surface</h3>", unsafe_allow_html=True)
 st.plotly_chart(fig)
 
-# Explanation below visualization
 st.markdown("The pricing of this product is entirely based on the volatility surface. Prices are dynamically linked to it, adjusting automatically according to the user's choice of strikes, maturity, and barriers.")
 st.markdown("---")
 
@@ -199,8 +185,8 @@ Z = np.random.standard_normal((NSimul, N_steps))
 
 # Function to simulate paths with specific volatility
 def simulate_paths(paths, r, vol, div):
-    dW = vol * np.sqrt(dt) * Z  # Brownian motion increments
-    drift = (r - div - 0.5 * vol**2) * dt  # Drift component
+    dW = vol * np.sqrt(dt) * Z
+    drift = (r - div - 0.5 * vol**2) * dt
     log_paths = np.cumsum(drift + dW, axis=1)
     paths[:, 1:] = S0 * np.exp(log_paths)
 
@@ -228,14 +214,14 @@ final_prices_vanilla_call = paths_vanilla_call[:, -1]
 digital_10_mc = np.where(hit_10 == 1, 10, 0)  # Pays 10% if CAC 40 touches 120%
 digital_25_mc = np.where(hit_25 == 1, 15, 0)  # Pays 15% if CAC 40 touches 150%
 
-## Knock-Out Call Options (Fix: Deactivate when barriers are hit)
+## Knock-Out Call Options
 call_ko_120_mc = np.where(hit_10 == 0,
                            np.maximum(Participation * (final_prices_ko_120 - S0) / S0, 0) * 100, 0)
 
 call_ko_150_mc = np.where((hit_10 == 1) & (hit_25 == 0),
                            np.maximum(Participation * (final_prices_ko_150 - 1.2 * S0) / S0, 0) * 100, 0)
 
-# Vanilla Call (Strike 150%)
+# Vanilla Call
 vanilla_call_mc = np.maximum((final_prices_vanilla_call - 1.5 * S0) / S0, 0) * 100
 
 # =============================================================================
@@ -269,7 +255,7 @@ product_price = (
 )
 
 # =============================================================================
-# 📊 Zero Coupon Bond
+# Zero Coupon Bond
 # =============================================================================
 zero_coupon_bond_price = np.exp(-r * T) * 100
 
@@ -281,9 +267,9 @@ final_product_price = (
     price_vanilla_call
 ) + zero_coupon_bond_price
 
-# =============================================================================
-# Store Results for Later Use
-# =============================================================================
+# Compute bank margin
+bank_margin = 100 - final_product_price
+
 stored_results = {
     "paths_digital_10": paths_digital_10,
     "paths_digital_25": paths_digital_25,
@@ -301,13 +287,14 @@ stored_results = {
 }
 
 # =============================================================================
-# 📊 Pricing Breakdown & Final Price
+# Pricing Breakdown & Final Price
 # =============================================================================
-st.markdown("<h3 style='text-align: left;'>📊 OptiLock 40 Pricing Breakdown</h3>", unsafe_allow_html=True)
 
 col1, col2 = st.columns([2, 1])
 
 with col1:
+    st.markdown("<h3 style='text-align: left; color: #333;'>📊 OptiLock 40 Pricing Breakdown</h3>", unsafe_allow_html=True)
+
     df_pricing = pd.DataFrame({
         "Component": [
             "One-Touch Digital (120%)",
@@ -326,24 +313,45 @@ with col1:
             f"{zero_coupon_bond_price:.2f}%"
         ]
     })
-    st.dataframe(df_pricing.style.set_properties(**{
-        "text-align": "center",
-        "background-color": "#f8f9fa",
-        "border": "1px solid #ddd",
-        "font-size": "16px"
-    }), width=700)
+
+    st.dataframe(df_pricing.style
+        .set_properties(**{
+            "text-align": "center",
+            "font-size": "16px"
+        })
+        .set_table_styles([
+            {"selector": "thead th", "props": [("background-color", "#e9ecef"), ("color", "#333"), ("font-weight", "bold"), ("text-align", "center")]},
+            {"selector": "tbody td", "props": [("background-color", "#f8f9fa"), ("border", "1px solid #ddd"), ("padding", "6px")]},
+            {"selector": "tbody tr:hover", "props": [("background-color", "#dee2e6")]}
+        ]),
+        width=700, height=260
+    )
 
 with col2:
-    st.markdown("<h2 style='text-align: center;'>💰 Final Price</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; font-size: 30px;'>💰 Final Price</h2>", unsafe_allow_html=True)
+    
     st.markdown(f"""
-        <div style="padding: 10px 30px; min-width: 280px; border-radius: 8px; border: 1px solid #008000; background-color: #e6f4ea; text-align: center;">
-            <h4 style="color: #008000; margin: 5px 0;">With ZCB</h4>
-            <h3 style="color: #008000; margin: 5px 0;"><strong>{final_product_price:.2f} %</strong></h3>
+        <div style="padding: 20px; margin-top: 15px; border-radius: 12px; border: 3px solid #008000; 
+                    background-color: #e6f4ea; text-align: center; font-size: 28px;">
+            <strong>{final_product_price:.2f} %</strong>
         </div>
     """, unsafe_allow_html=True)
+    
+    bank_margin_color = "#FF4500" if bank_margin < 0 else "#008000"
+
+    st.markdown(f"""
+        <div style="padding: 20px; margin-top: 20px; border-radius: 12px; border: 3px solid {bank_margin_color}; 
+                    background-color: #f8f9fa; text-align: center; font-size: 22px;">
+            🏦 <strong> Bank Margin:</strong> 
+            <span style="font-weight: bold; color: {bank_margin_color};">
+                {bank_margin:.2f}%
+            </span>
+        </div>
+    """, unsafe_allow_html=True)
+    
+st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
 
 st.markdown("---")
-
 
 st.markdown("<h3 style='text-align: center;'>🏦 Bank Margin & Buyback Price Calculation</h3>", unsafe_allow_html=True)
 
@@ -353,17 +361,11 @@ liquidity_penalty_percentage = st.slider(
     min_value=0.0, max_value=2.0, value=1.0, step=0.1
 ) / 100
 
-# Compute bank margin
-bank_margin = 100 - final_product_price
-
-# Compute buyback price based on selected penalty
 liquidity_penalty = liquidity_penalty_percentage * final_product_price
 buyback_price = final_product_price - liquidity_penalty
 
-# Determine color for bank margin (Red if negative, Green if positive)
 bank_margin_color = "#FF4500" if bank_margin < 0 else "#008000"
 
-# Define professional styling
 st.markdown(f"""
     <style>
         .pricing-info {{
@@ -382,7 +384,6 @@ st.markdown(f"""
     </style>
 """, unsafe_allow_html=True)
 
-# Display the results dynamically
 st.markdown(f"""
     <div class="pricing-info">
         🏦 **Bank Upfront Margin:** <span class="pricing-value">{bank_margin:.2f}%</span><br>
@@ -397,7 +398,7 @@ st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
 # Define a range of NSimul values to observe convergence
 # =============================================================================
 
-NSimul_values = np.logspace(2, np.log10(NSimul), num=10, dtype=int)  # From 100 to 100,000
+NSimul_values = np.logspace(2, np.log10(NSimul), num=10, dtype=int)
 
 # Storage for tracking convergence
 convergence_results = {
@@ -468,7 +469,6 @@ st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
 # =============================================================================
 # Black-Scholes Analytical Price Calculation
 # =============================================================================
-@st.cache_data
 def black_scholes_call(S0, K, T, r, vol, div):
     d1 = (np.log(S0 / K) + (r - div + 0.5 * vol ** 2) * T) / (vol * np.sqrt(T))
     d2 = d1 - vol * np.sqrt(T)
@@ -514,11 +514,11 @@ convergence_df = pd.DataFrame(bs_results)
 # =============================================================================
 # Streamlit Visualization
 # =============================================================================
+
 st.title("Monte Carlo vs Black-Scholes Convergence Analysis")
 st.write("Comparison of Monte Carlo simulated prices against the Black-Scholes analytical solution as the number of simulations increases.")
 st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
 
-# Create columns: Larger for the first graph, smaller for the second
 col1, col2 = st.columns([3, 2])
 
 with col1:
@@ -562,23 +562,28 @@ st.markdown("---")
 
 # Summary & Insights
 st.markdown("""
-    <h4>🔍 Key Observations:</h4>
-    - As the number of simulations increases, the **Monte Carlo price converges** to the Black-Scholes price.
-    - The **absolute error decreases**, but its **volatility is high at lower simulation counts**.
-    - Monte Carlo requires a **large number of simulations** to achieve a stable price with low error.
+    <h3>Summary & Insights</h3>
+    <p>Our Monte Carlo simulation analysis yields the following key insights:</p>
+    <ol>
+        <li>The Monte Carlo price progressively converges to the Black-Scholes price as the number of simulations increases.</li>
+        <li>The absolute error decreases with more simulations; however, its volatility remains significant when the number of simulations is low.</li>
+        <li>A high number of simulations is required to achieve price stability with minimal error, highlighting the computational cost of Monte Carlo methods.</li>
+    </ol>
 """, unsafe_allow_html=True)
+
 st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
 
 # =============================================================================
-# 📊 Sensitivity & Margin Impact Analysis
+# Sensitivity & Margin Impact Analysis
 # =============================================================================
-st.markdown("<h2 style='text-align: center;'>📊 Sensitivity Analysis Dashboard</h2>", unsafe_allow_html=True)
+
+st.markdown("<h2 style='text-align: center;'> Sensitivity Analysis Dashboard</h2>", unsafe_allow_html=True)
 st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
 
 col_left, col_middle, col_right = st.columns([3, 0.1, 2])
 
 with col_left:
-    st.markdown("<h4>📉 Interest Rate Change</h4>", unsafe_allow_html=True)
+    st.markdown("<h4> Interest Rate Change</h4>", unsafe_allow_html=True)
     
     rate_change_type = st.radio(
         "Rate Change Type",
@@ -591,14 +596,12 @@ with col_left:
         min_value=0, max_value=100, value=50, step=5
     ) / 10000
 
-    # Adjusted Interest Rate
     new_selected_r = r - basis_points_change if rate_change_type == "Decrease" else r + basis_points_change
     new_selected_r = max(new_selected_r, 0.0)
 
-    # Divider for better spacing
     st.markdown("<hr style='border: 1px solid #ddd;'>", unsafe_allow_html=True)
 
-    st.markdown("<h4>📊 Volatility Adjustment</h4>", unsafe_allow_html=True)
+    st.markdown("<h4> Volatility Adjustment</h4>", unsafe_allow_html=True)
     
     vol_change_type = st.radio(
         "Volatility Change Type",
@@ -611,7 +614,6 @@ with col_left:
         min_value=0.0, max_value=5.0, value=1.0, step=0.1
     ) / 100
 
-    # Divider for better spacing
     st.markdown("<hr style='border: 1px solid #ddd;'>", unsafe_allow_html=True)
 
 with col_middle:
@@ -622,7 +624,7 @@ with col_middle:
     
 with col_right:
     
-    st.markdown("<h4>📆 Maturity Adjustment</h4>", unsafe_allow_html=True)
+    st.markdown("<h4> Maturity Adjustment</h4>", unsafe_allow_html=True)
                 
     maturity_change = st.slider(
         "Increase in Maturity (Years)", 
@@ -633,13 +635,11 @@ with col_right:
 
     st.markdown("<hr style='border: 1px solid #ddd;'>", unsafe_allow_html=True)
     
-    st.markdown("<h4>💰 Digital One-Touch Coupon</h4>", unsafe_allow_html=True)
+    st.markdown("<h4> Digital One-Touch Coupon</h4>", unsafe_allow_html=True)
 
-    # Base Digital Coupon Values
-    digital_10_base = 10  # Pays 10% when triggered
-    digital_25_base = 15  # Pays 15% when triggered
+    digital_10_base = 10
+    digital_25_base = 15
 
-    # Digital 10% Coupon
     coupon_change_type_10 = st.radio(
         "Change Type for Digital 10%", ("Decrease", "Increase"), horizontal=True, key="coupon_10"
     )
@@ -649,13 +649,11 @@ with col_right:
         min_value=0.0, max_value=5.0, value=1.0, step=0.1
     )
 
-    # **Corrected Digital 10% Payout**
     if coupon_change_type_10 == "Decrease":
         new_digital_10_payout = digital_10_base - coupon_change_10
     else:
         new_digital_10_payout = digital_10_base + coupon_change_10
 
-    # Digital 25% Coupon
     coupon_change_type_25 = st.radio(
         "Change Type for Digital 25%", ("Decrease", "Increase"), horizontal=True, key="coupon_25"
     )
@@ -665,7 +663,6 @@ with col_right:
         min_value=0.0, max_value=5.0, value=1.0, step=0.1
     )
     
-    # **Corrected Digital 25% Payout**
     if coupon_change_type_25 == "Decrease":
         new_digital_25_payout = digital_25_base - coupon_change_25
     else:
@@ -674,7 +671,7 @@ with col_right:
 
 
 # =============================================================================
-# 📉 Updated Volatilities Based on User Changes
+# Updated Volatilities Based on User Changes
 # =============================================================================
     vol_vanilla_call_new = vol_interpolator([150, new_selected_T])[0]
     vol_digital_10_new = vol_interpolator([barrier_10_pct, new_selected_T])[0]
@@ -697,13 +694,13 @@ with col_right:
         vol_ko_150_new += volatility_change
 
 # =============================================================================
-# 📉 Monte Carlo Simulation with Updated Parameters (Sensitivity Analysis)
+# Monte Carlo Simulation with Updated Parameters (Sensitivity Analysis)
 # =============================================================================
 np.random.seed(42)
 
 # Update steps based on new maturity
 N_steps_new = 252 * new_selected_T  
-dt = new_selected_T / N_steps_new  # Adjusted time step
+dt = new_selected_T / N_steps_new
 
 # Initialize new paths
 paths_digital_10_new = np.zeros((NSimul, N_steps_new + 1))
@@ -737,7 +734,7 @@ hit_10_new = (max_paths_digital_10_new >= Barrier_10).astype(int)
 hit_25_new = (max_paths_digital_25_new >= Barrier_25).astype(int)
 
 # =============================================================================
-# 💰 Updated Payoff Computation for Each Option
+# Updated Payoff Computation for Each Option
 # =============================================================================
 final_prices_ko_120_new = paths_ko_120_new[:, -1]
 final_prices_ko_150_new = paths_ko_150_new[:, -1]
@@ -754,11 +751,11 @@ call_ko_120_mc_new = np.where(hit_10_new == 0,
 call_ko_150_mc_new = np.where((hit_10_new == 1) & (hit_25_new == 0),
                                np.maximum(Participation * (final_prices_ko_150_new - 1.2 * S0) / S0, 0) * 100, 0)
 
-# Vanilla Call (Strike 150%)
+# Vanilla Call
 vanilla_call_mc_new = np.maximum((final_prices_vanilla_call_new - 1.5 * S0) / S0, 0) * 100
 
 # =============================================================================
-# 📊 Compute Updated Expected Payoff & Discount Factor
+# Compute Updated Expected Payoff & Discount Factor
 # =============================================================================
 expected_payoff_digital_10_new = np.mean(digital_10_mc_new)
 expected_payoff_digital_25_new = np.mean(digital_25_mc_new)
@@ -777,7 +774,7 @@ price_call_ko_150_new = expected_payoff_call_ko_150_new * discount_factor_new * 
 price_vanilla_call_new = expected_payoff_vanilla_call_new * discount_factor_new * Participation
 
 # =============================================================================
-# 💰 Final Structured Product Pricing (Updated)
+# Final Structured Product Pricing (Updated)
 # =============================================================================
 final_product_price_new = (
     price_call_ko_120_new +
@@ -791,14 +788,14 @@ final_product_price_new = (
 bank_margin_new = 100 - final_product_price_new
 
 # =============================================================================
-# 📊 Display Updated Results
+# Display Updated Results
 # =============================================================================
 st.markdown("---")
 
-col1, col2 = st.columns([3, 2])  # Adjust column widths to make right side larger
+col1, col2 = st.columns([3, 2])
 
 with col1:
-    st.markdown("<h2 style='text-align: left;'>📊 Updated Pricing Breakdown</h2>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: left; color: #333;'>📊 Updated OptiLock 40 Pricing Breakdown</h3>", unsafe_allow_html=True)
     
     df_updated_pricing = pd.DataFrame({
         "Component": [
@@ -836,7 +833,6 @@ with col2:
         </div>
     """, unsafe_allow_html=True)
     
-    # Bank Margin Section
     bank_margin_color = "#FF4500" if bank_margin_new < 0 else "#008000"
 
     st.markdown(f"""
@@ -852,40 +848,60 @@ with col2:
 st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
 
 # =============================================================================
-# 🔍 Key Takeaways & Strategic Insights
+# Key Takeaways & Strategic Insights
 # =============================================================================
 
-st.markdown("<h3 style='text-align: center; color: #333;'>🔍 Key Takeaways & Strategic Insights</h3>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center; color: #222;'>Key Takeaways & Strategic Insights</h3>", unsafe_allow_html=True)
 st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
 
-# Define text style for readability
-text_style = "font-size:16px; line-height:1.6; color:#222;"
+text_style = "font-size:16px; line-height:1.5; color:#222;"
+section_style = "background-color:#f1f3f5; padding:14px; border-radius:6px; margin-bottom:10px;"
 
-# Define section block style for better visibility
-section_style = "background-color:#f8f9fa; padding:12px; border-radius:8px; margin-bottom:12px;"
+st.markdown(f"""
+    <div style='{section_style}'>
+        <h4 style='color:#333; margin-bottom:5px;'>Interest Rate Sensitivity</h4>
+        <p style='{text_style}'>A decline in interest rates reduces the Zero Coupon Bond (ZCB) value, impacting overall margin.</p>
+        <p style='{text_style}'><b>Mitigation:</b> Interest rate swaps and duration hedging can help manage risk exposure.</p>
+    </div>
+""", unsafe_allow_html=True)
 
-st.markdown(f"<div style='{section_style}'><p style='{text_style}'><b>📉 Interest Rate Sensitivity:</b> A decline in rates reduces the Zero Coupon Bond (ZCB) value, lowering overall margin.</p>"
-            f"<p style='{text_style}'>🔹 <b>Mitigation:</b> Interest rate swaps or duration hedging can help manage risk exposure.</p></div>", unsafe_allow_html=True)
+st.markdown(f"""
+    <div style='{section_style}'>
+        <h4 style='color:#333; margin-bottom:5px;'>Maturity Extension</h4>
+        <p style='{text_style}'>Extending duration enhances long-term stability but increases reinvestment and interest rate risks.</p>
+        <p style='{text_style}'><b>Strategy:</b> Adjusting ZCB allocation and optimizing asset-liability duration can balance the risk-return tradeoff.</p>
+    </div>
+""", unsafe_allow_html=True)
 
-st.markdown(f"<div style='{section_style}'><p style='{text_style}'><b>⏳ Maturity Extension:</b> Increasing the duration enhances long-term stability but also raises reinvestment and interest rate risks.</p>"
-            f"<p style='{text_style}'>🔹 <b>Strategy:</b> Adjusting ZCB allocation and optimizing asset-liability duration can balance the risk-return tradeoff.</p></div>", unsafe_allow_html=True)
+st.markdown(f"""
+    <div style='{section_style}'>
+        <h4 style='color:#333; margin-bottom:5px;'>Coupon Adjustments</h4>
+        <p style='{text_style}'>Higher coupons enhance product attractiveness but reduce bank margins.</p>
+        <p style='{text_style}'><b>Optimization:</b> Structured coupons (e.g., step-up, floating rates) offer flexibility while managing risk exposure.</p>
+    </div>
+""", unsafe_allow_html=True)
 
-st.markdown(f"<div style='{section_style}'><p style='{text_style}'><b>💰 Coupon Adjustments:</b> Higher coupons enhance product attractiveness but erode bank margin.</p>"
-            f"<p style='{text_style}'>🔹 <b>Optimization:</b> Structured coupons (e.g., step-up, floating coupons) provide flexibility while controlling risk exposure.</p></div>", unsafe_allow_html=True)
+st.markdown(f"""
+    <div style='{section_style}'>
+        <h4 style='color:#333; margin-bottom:5px;'>Volatility Impact</h4>
+        <p style='{text_style}'>Increased market volatility raises option prices, affecting structured product profitability.</p>
+        <p style='{text_style}'><b>Risk Control:</b> Implementing dynamic hedging techniques helps smooth pricing fluctuations.</p>
+    </div>
+""", unsafe_allow_html=True)
 
-st.markdown(f"<div style='{section_style}'><p style='{text_style}'><b>📊 Volatility Impact:</b> Increased volatility elevates option prices, affecting structured product profitability.</p>"
-            f"<p style='{text_style}'>🔹 <b>Risk Control:</b> Incorporating dynamic hedging techniques can smooth out pricing fluctuations.</p></div>", unsafe_allow_html=True)
-
-st.markdown(f"<div style='{section_style}'><p style='{text_style}'><b>📈 Scenario Planning & Stress Testing:</b> Simulating multiple rate, volatility, and market conditions ensures robustness against adverse movements.</p>"
-            f"<p style='{text_style}'>🔹 <b>Best Practice:</b> Regular Monte Carlo simulations and historical backtesting enhance risk-adjusted decision-making.</p></div>", unsafe_allow_html=True)
+st.markdown(f"""
+    <div style='{section_style}'>
+        <h4 style='color:#333; margin-bottom:5px;'>Scenario Planning & Stress Testing</h4>
+        <p style='{text_style}'>Simulating multiple rate, volatility, and market conditions ensures robustness against adverse movements.</p>
+        <p style='{text_style}'><b>Best Practice:</b> Regular Monte Carlo simulations and historical backtesting improve risk-adjusted decision-making.</p>
+    </div>
+""", unsafe_allow_html=True)
 
 st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
 
-
 # =============================================================================
-# 📉 Black-Scholes Analytical Price Calculation (After Sensitivity Adjustments)
+# Black-Scholes Analytical Price Calculation (After Sensitivity Adjustments)
 # =============================================================================
-@st.cache_data
 def black_scholes_call_2(S0, K, T, r, vol, div):
     d1 = (np.log(S0 / K) + (r - div + 0.5 * vol ** 2) * T) / (vol * np.sqrt(T))
     d2 = d1 - vol * np.sqrt(T)
@@ -898,7 +914,7 @@ bs_price_new = black_scholes_call_2(S0, 1.5 * S0, new_selected_T, new_selected_r
 discount_factor_new = np.exp(-new_selected_r * new_selected_T)
 
 # =============================================================================
-# 🏦 Monte Carlo vs Black-Scholes Convergence Analysis (Updated)
+# Monte Carlo vs Black-Scholes Convergence Analysis (Updated)
 # =============================================================================
 
 # Store updated results
@@ -930,7 +946,7 @@ for NSimul in NSimul_values:
 convergence_df_new = pd.DataFrame(bs_results_new)
 
 # =============================================================================
-# 📊 Streamlit Visualization (Updated)
+# Streamlit Visualization (Updated)
 # =============================================================================
 st.title("Monte Carlo vs Black-Scholes Convergence Analysis (Updated)")
 st.write("Comparison of Monte Carlo simulated prices against the Black-Scholes analytical solution after sensitivity adjustments.")
@@ -954,7 +970,7 @@ with col1:
         xaxis=dict(title="Number of Simulations (log scale)", type="log"), 
         yaxis=dict(title="Option Price (%)"), 
         template="plotly_white",
-        legend=dict(orientation="h", yanchor="bottom", y=1.1, xanchor="center", x=0.5)
+        legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="center", x=0.5)
     )
     
     st.plotly_chart(fig_conv_new, use_container_width=True)
@@ -978,11 +994,11 @@ st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
 # =============================================================================
 # Monte Carlo Simulation of CAC 40 Prices
 # =============================================================================
-st.markdown("<h2 style='text-align: center;'>📈 Monte Carlo Simulation - CAC 40 Price Paths</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='text-align: center;'>Monte Carlo Simulation - Analysis</h2>", unsafe_allow_html=True)
 st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
 
 # =============================================================================
-# 📊 Final CAC 40 Price Distribution - Improved Layout
+# Final CAC 40 Price Distribution
 # =============================================================================
 
 prob_hit_120_new = np.mean(hit_10_new) * 100
@@ -991,6 +1007,8 @@ prob_hit_150_new = np.mean(hit_25_new) * 100
 col1, col2 = st.columns([2.5, 1.5])
 
 with col1:
+    st.markdown("")
+
     density_new = gaussian_kde(final_prices_vanilla_call_new)
     x_vals_new = np.linspace(min(final_prices_vanilla_call_new), max(final_prices_vanilla_call_new), 200)
     density_vals_new = density_new(x_vals_new)
@@ -1014,7 +1032,6 @@ with col1:
         name="Density Estimation"
     ))
 
-    # Barrier Levels
     fig_dist.add_trace(go.Scatter(
         x=[S0, S0], y=[0, max(density_vals_new) * 1.1],
         mode="lines", name="Initial CAC 40 Level",
@@ -1039,19 +1056,22 @@ with col1:
         template="plotly_white",
         hovermode="x unified",
         legend=dict(
-            orientation="h",   
-            yanchor="bottom", y=1.08,  
-            xanchor="center", x=0.5,
-            bgcolor="rgba(255,255,255,0.8)",
+            orientation="v",
+            yanchor="top", y=1,
+            xanchor="right", x=1,
+            bgcolor="rgba(255,255,255,0.7)",
+            bordercolor="rgba(0, 0, 0, 0.2)",
+            borderwidth=1,
             font=dict(size=14)
         ),
-        height=500
+        height=400,
+        margin=dict(t=20, b=20, l=50, r=50)
     )
 
     st.plotly_chart(fig_dist, use_container_width=True)
 
 with col2:
-    st.markdown("<h4 style='text-align: center;'>📊 Barrier Activation Probabilities</h4>", unsafe_allow_html=True)
+    st.markdown("<h4 style='text-align: left;'>📊 Barrier Activation Probabilities</h4>", unsafe_allow_html=True)
 
     barrier_stats_df_new = pd.DataFrame({
         "Barrier Level": ["120%", "150%"],
@@ -1061,7 +1081,7 @@ with col2:
     st.dataframe(barrier_stats_df_new.style.set_properties(**{"text-align": "center"}), 
                  hide_index=True, width=350)
 
-    st.markdown("<h4 style='text-align: center; margin-top: 10px;'>📊 Key Statistics</h4>", unsafe_allow_html=True)
+    st.markdown("<h4 style='text-align: left; margin-top: 10px;'>📊 Key Statistics</h4>", unsafe_allow_html=True)
 
     key_stats_df = pd.DataFrame({
         "Metric": ["Min Price", "Max Price", "Mean Price"],
@@ -1076,9 +1096,9 @@ with col2:
 st.markdown("---")
 
 # =============================================================================
-# 📊 Payoff Summary at Maturity
+# Payoff Summary at Maturity
 # =============================================================================
-st.markdown("<h3 style='text-align: center;'>📊 Payoff Summary at Maturity</h3>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center;'>Payoff Summary at Maturity</h3>", unsafe_allow_html=True)
 
 payoff_df_new = pd.DataFrame({
     "Final CAC 40 Level": final_prices_vanilla_call_new,
@@ -1099,9 +1119,9 @@ payoff_df_new = pd.DataFrame({
 MAX_ROWS_DISPLAY = 5000
 payoff_sample_df_new = payoff_df_new.head(MAX_ROWS_DISPLAY)
 
-payoff_sample_df_new = payoff_sample_df_new.map(lambda x: f"{x:.2f}")
+payoff_sample_df_new = payoff_sample_df_new.applymap(lambda x: f"{x:.2f}")
 
-styled_payoff_df_new = payoff_sample_df_new.style.map(
+styled_payoff_df_new = payoff_sample_df_new.style.applymap(
     lambda x: 'background-color: #ffcccb' if float(x) > 0 else '', subset=["Total Payoff"]
 )
 
@@ -1109,15 +1129,15 @@ st.dataframe(styled_payoff_df_new, width=1000, height=200)
 st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
 
 # =============================================================================
-# 📊 Payoff Visualization with Backtesting Spot Selection
+# Payoff Visualization with Backtesting Spot Selection
 # =============================================================================
-st.markdown("<h3 style='text-align: center;'>📊 Payoff Visualization</h3>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center;'>Payoff Visualization</h3>", unsafe_allow_html=True)
 st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
 
 col1, col2 = st.columns([2, 2], gap="large")
 
 with col1:
-    st.markdown("<h4 style='margin-bottom: 10px;'>📈 CAC 40 Variation (%)</h4>", unsafe_allow_html=True)
+    st.markdown("<h4 style='margin-bottom: 10px;'>CAC 40 Variation (%)</h4>", unsafe_allow_html=True)
     
     cac_level = st.slider(
         "Adjust CAC 40 Variation",  
@@ -1125,11 +1145,10 @@ with col1:
         format="%d%%"
     )
 
-    # Add space for better layout
     st.markdown("<br><br>", unsafe_allow_html=True)
 
 with col2:
-    st.markdown("<h4 style='margin-top: 10px;'>🔔 Barrier Activation</h4>", unsafe_allow_html=True)
+    st.markdown("<h4 style='margin-top: 10px;'>Barrier Activation</h4>", unsafe_allow_html=True)
 
     c1, c2 = st.columns([0.2, 1])
     with c1:
@@ -1146,9 +1165,8 @@ with col2:
 st.markdown("---")
 
 # =============================================================================
-# Dynamic Payoff Calculation Function
+# Dynamic Payoff Calculation
 # =============================================================================
-@st.cache_data
 def calculate_payoff(cac_variation, knock_120, knock_150):
     payoff_participation = max(Participation * cac_variation, 0)
     payoff_digital_120 = 10 if knock_120 else 0
@@ -1165,7 +1183,7 @@ overall_payoff_client = np.array([calculate_payoff(cac, knock_120_flag, knock_15
 overall_payoff_bank = -overall_payoff_client
 
 # =============================================================================
-# 📊 Payoff Visualization
+# Payoff Visualization
 # =============================================================================
 
 # --- First Graph: Payoff vs CAC 40 variation ---
@@ -1187,9 +1205,9 @@ fig1.add_hline(y=0, line=dict(color="black", width=1, dash="dash"))
 fig1.add_vline(x=0, line=dict(color="black", width=1, dash="dash"))
 
 fig1.update_layout(
-    title="🔍 Payoff Evolution vs CAC 40 Variation",
-    xaxis_title="📊 CAC 40 Variation (%)",
-    yaxis_title="📈 Payoff (% of Initial Capital)",
+    title="Payoff Evolution vs CAC 40 Variation",
+    xaxis_title="CAC 40 Variation (%)",
+    yaxis_title="Payoff (% of Initial Capital)",
     template="plotly_dark",
     hovermode="x unified",
     showlegend=True
@@ -1214,21 +1232,20 @@ fig2.add_trace(go.Bar(
 fig2.add_hline(y=0, line=dict(color="black", width=1, dash="dash"))
 
 fig2.update_layout(
-    title=f"📌 OptiLock 40 Payoff (CAC 40: {cac_level:.1f}%)",
-    xaxis_title="👥 Counterparties",
-    yaxis_title="💵 Payoff (% of Initial Capital)",
+    title=f"OptiLock 40 Payoff (CAC 40: {cac_level:.1f}%)",
+    xaxis_title="Counterparties",
+    yaxis_title="Payoff (% of Initial Capital)",
     template="plotly_dark",
     hovermode="x unified",
     showlegend=False,
     margin=dict(t=40, b=40, l=50, r=50)
 )
 
-# Display the second graph
 st.plotly_chart(fig2)
 st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
 
 # =============================================================================
-# 📊 Improved Historical CAC 40 Price & Payoff Visualization
+# Historical CAC 40 Price & Payoff Visualization
 # =============================================================================
     
 st.markdown("<h3 style='text-align: center;'>📊 Historical CAC 40 & Payoff Backtesting</h3>", unsafe_allow_html=True)
@@ -1255,7 +1272,7 @@ else:
     user_Participation = Participation
 
     # =============================================================================
-    # 💰 Corrected Time-Dependent Payoff Calculation for Client
+    # Time-Dependent Payoff Calculation for Client
     # =============================================================================
     
     # Compute CAC 40 return based on user-defined initial level
@@ -1276,43 +1293,35 @@ else:
     payoff_client[knock_120_active] = np.maximum(payoff_client[knock_120_active], 10)
     payoff_client[knock_150_active] = np.maximum(payoff_client[knock_150_active], 25)
 
-    # Compute P/L for Bank (negative of client P/L)
+    # Compute P/L for Bank
     payoff_bank = -payoff_client
     
     fig, ax1 = plt.subplots(figsize=(12, 6))
     
-    # --- Plot CAC 40 historical price ---
     ax1.plot(cac40.index, cac40, label="CAC 40 Price", color="blue", linewidth=1.5, alpha=0.9)
     
-    # --- Add barrier levels with a subtle background highlight ---
     ax1.axhspan(user_Barrier_10 * 0.98, user_Barrier_10 * 1.02, color="green", alpha=0.1)
     ax1.axhspan(user_Barrier_25 * 0.98, user_Barrier_25 * 1.02, color="purple", alpha=0.1)
     
-    # --- Add barrier lines ---
     ax1.axhline(user_S0, color="black", linestyle="--", linewidth=1, label="Initial CAC 40 Level")
     ax1.axhline(user_Barrier_10, color="green", linestyle="--", linewidth=1, label=f"{barrier_10_pct}% Barrier")
     ax1.axhline(user_Barrier_25, color="purple", linestyle="--", linewidth=1, label=f"{barrier_25_pct}% Barrier")
     
-    # --- Labels & Aesthetics ---
     ax1.set_xlabel("Date", fontsize=13, fontweight="bold")
     ax1.set_ylabel("CAC 40 Price", fontsize=13, fontweight="bold")
     
-    # --- Improved Legend Placement (Inside Upper Left) ---
     ax1.legend(loc="upper left", fontsize=11, frameon=True, fancybox=True, framealpha=1, edgecolor="black", facecolor="white")
     
-    # --- Improve grid aesthetics ---
     ax1.grid(alpha=0.4, linestyle="dotted")
     
-    # --- Rotate x-axis labels slightly ---
     plt.xticks(rotation=20, fontsize=11)
     plt.yticks(fontsize=11)
     
-    # --- Display the improved graph ---
     st.pyplot(fig)
     st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
 
     # =============================================================================
-    # 💰 Display P/L for Client and Bank
+    # Display P/L for Client and Bank
     # =============================================================================
     st.markdown("<h3 style='text-align: center;'>💰 P/L Calculation for Client and Bank</h3>", unsafe_allow_html=True)
     st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
@@ -1329,10 +1338,7 @@ else:
             format="YYYY-MM-DD"
         )
                 
-        # Convert selected date to match DataFrame index
         selected_date = pd.to_datetime(selected_date)
-        
-        # Find the closest available date if the exact one is missing
         if selected_date not in cac40.index:
             selected_date = cac40.index.asof(selected_date)
         
@@ -1341,13 +1347,11 @@ else:
         selected_payoff_client = payoff_client.loc[selected_date].item()
         selected_payoff_bank = payoff_bank.loc[selected_date].item()
         
-        # --- Create Compact Results Table ---
         pnl_results = pd.DataFrame({
             "Metric": ["📊 CAC 40 Return (%)", "💰 Client Payoff (%)", "🏦 Bank Payoff (%)"],
             "Value": [f"{selected_cac_return:.2f}%", f"{selected_payoff_client:.2f}%", f"{selected_payoff_bank:.2f}%"]
         })
         
-        # --- Styled, compact table ---
         st.markdown("<h4 style='text-align: center; margin-bottom: 10px;'>📊 P/L Summary</h4>", unsafe_allow_html=True)
         
         st.dataframe(
@@ -1362,50 +1366,38 @@ else:
         )
 
     with col2:
-        # --- Initialize figure ---
         fig2, ax2 = plt.subplots(figsize=(10, 6))
         
-        # --- Plot P/L over time ---
         ax2.plot(cac40.index, payoff_client, label="Client Payoff (%)", color="green", linewidth=1.5)
         ax2.plot(cac40.index, payoff_bank, label="Bank Payoff (%)", color="red", linewidth=1.5)
         
-        # --- Highlight the selected date ---
         ax2.axvline(selected_date, color="black", linestyle="--", linewidth=1, alpha=0.7, label="Selected Date")
         
-        # --- Zero Reference Line ---
         ax2.axhline(0, color='gray', linestyle='--', linewidth=1)
         
-        # --- Labels & Aesthetics ---
         ax2.set_xlabel("Date", fontsize=13, fontweight="bold")
         ax2.set_ylabel("Payoff (% of Initial Capital)", fontsize=13, fontweight="bold")
         ax2.set_title("Client vs. Bank P/L Over Time", fontsize=15, fontweight="bold")
         
-        # --- Improved Legend Placement ---
         ax2.legend(loc="upper left", fontsize=11, frameon=True, fancybox=True, edgecolor="black", facecolor="white")
         
-        # --- Improve Grid Aesthetics ---
         ax2.grid(alpha=0.4, linestyle="dotted")
         
-        # --- Rotate X-Axis Labels for Readability ---
         plt.xticks(rotation=20, fontsize=11)
         plt.yticks(fontsize=11)
         
-        # --- Display the improved graph ---
         st.pyplot(fig2)
     
     st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
 
 # =============================================================================
-# 📈 Secondary Market Pricing - User Selection for Forward Rate
+# Secondary Market Pricing
 # =============================================================================
 
 st.markdown("<h2 style='text-align: center;'>📈 Secondary Market Pricing</h2>", unsafe_allow_html=True)
 st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
 
-# =============================================================================
-# 🔹 Step 1: User Input for Risk-Free Rate (r) for Forward Calculation
-# =============================================================================
-st.markdown("### ⚙️ Market Parameters\n _Select the risk-free rates below:_")
+st.markdown("### Market Parameters\n _Select the risk-free rates below:_")
 
 col1, col2 = st.columns([2, 2])
 
@@ -1423,22 +1415,8 @@ with col2:
 
 st.markdown("---")
 
-# =============================================================================
-# 🔹 Step 2: Compute Forward Price of the Underlying in 1 Year
-# =============================================================================
-
 F_T1 = S0 * np.exp((ZC1 - div) * 1)
-
-# =============================================================================
-# 🔹 Step 3: Compute Forward Rate
-# =============================================================================
-
 F_1y3y= (ZC3 * T - ZC1 * 1)/(T-1)
-
-# =============================================================================
-# 🔹 Step 3.5: Fetch Correct Volatility for Remaining Maturity (2 Years)
-# =============================================================================
-
 new_T_2 = T - 1
 
 vol_vanilla_call_new_2 = vol_interpolator([150, new_T_2])[0]  # Volatility at 150% strike for 2Y
@@ -1448,49 +1426,43 @@ vol_ko_120_new_2 = vol_interpolator([100, new_T_2])[0]  # Volatility at 100% str
 vol_ko_150_new_2 = vol_interpolator([120, new_T_2])[0]  # Volatility at 120% strike for 2Y
 
 # =============================================================================
-# 🔹 Step 4: Monte Carlo Simulation for Remaining Maturity (T-1 Years)
+# Monte Carlo Simulation for Remaining Maturity (T-1 Years)
 # =============================================================================
 
-N_steps_new_2 = 252 * new_T_2  # Adjust for the remaining maturity
-dt_new = new_T_2 / N_steps_new_2  # New time step
+N_steps_new_2 = 252 * new_T_2
+dt_new = new_T_2 / N_steps_new_2
 
-# Initialize paths (Now starting from F_T1)
 paths_digital_10_new_2 = np.zeros((NSimul, N_steps_new + 1))
 paths_digital_25_new_2 = np.zeros((NSimul, N_steps_new + 1))
 paths_ko_120_new_2 = np.zeros((NSimul, N_steps_new + 1))
 paths_ko_150_new_2 = np.zeros((NSimul, N_steps_new + 1))
 paths_vanilla_call_new_2 = np.zeros((NSimul, N_steps_new + 1))
 
-# Set initial price at Forward Price F_T1
 paths_digital_10_new_2[:, 0] = F_T1
 paths_digital_25_new_2[:, 0] = F_T1
 paths_ko_120_new_2[:, 0] = F_T1
 paths_ko_150_new_2[:, 0] = F_T1
 paths_vanilla_call_new_2[:, 0] = F_T1
 
-# Generate shocks for Monte Carlo
 Z_new = np.random.standard_normal((NSimul, N_steps_new))
 
-# Simulate paths for all options using their respective volatilities
 simulate_paths(paths_digital_10_new_2, F_1y3y, vol_digital_10_new_2, div)
 simulate_paths(paths_digital_25_new_2, F_1y3y, vol_digital_25_new_2, div)
 simulate_paths(paths_ko_120_new_2, F_1y3y, vol_ko_120_new_2, div)
 simulate_paths(paths_ko_150_new_2, F_1y3y, vol_ko_150_new_2, div)
 simulate_paths(paths_vanilla_call_new_2, F_1y3y, vol_vanilla_call_new_2, div)
 
-# Final prices after (T-1) years
 final_prices_digital_10_new_2 = paths_digital_10_new_2[:, -1]
 final_prices_digital_25_new_2 = paths_digital_25_new_2[:, -1]
 final_prices_ko_120_new_2 = paths_ko_120_new_2[:, -1]
 final_prices_ko_150_new_2 = paths_ko_150_new_2[:, -1]
 final_prices_vanilla_call_new_2 = paths_vanilla_call_new_2[:, -1]
 
-# Compute barrier hits in the new timeframe
 hit_10_new_2 = (final_prices_digital_10_new_2 >= Barrier_10).astype(int)
 hit_25_new_2 = (final_prices_digital_25_new_2 >= Barrier_25).astype(int)
 
 # =============================================================================
-# 🔹 Step 5: Recalculate Expected Payoffs with Correct Discounting
+# Recalculate Expected Payoffs
 # =============================================================================
 
 digital_10_mc_new_2 = np.where(hit_10_new_2 == 1, 10, 0)
@@ -1510,12 +1482,8 @@ expected_payoff_call_ko_120_new_2 = np.mean(call_ko_120_mc_new_2)
 expected_payoff_call_ko_150_new_2 = np.mean(call_ko_150_mc_new_2)
 expected_payoff_vanilla_call_new_2 = np.mean(vanilla_call_mc_new_2)
 
-# =============================================================================
-# 🔹 Step 6: Compute New Discount Factor (Using Correct 2-Year Rate for Options)
-# =============================================================================
-
-discount_factor_options = np.exp(-F_1y3y * (T-2))  # **Use 2-year rate for options**
-discount_factor_zcb = np.exp(-F_1y3y * (T-1))  # **Use T-1 rate for ZCB**
+discount_factor_options = np.exp(-F_1y3y * (T-2))
+discount_factor_zcb = np.exp(-F_1y3y * (T-1))
 zero_coupon_bond_price_new_2 = discount_factor_zcb * 100
 
 price_digital_10_new_2 = expected_payoff_digital_10_new_2 * discount_factor_options
@@ -1532,17 +1500,13 @@ final_product_price_new_2 = (
     price_vanilla_call_new_2
 ) + zero_coupon_bond_price_new_2
 
-# =============================================================================
-# 🔹 Pricing Breakdown Table (Initial vs 1 Year After) + Final Price on the Side
-# =============================================================================
-
-# Use columns to align content
 col1, col2 = st.columns([2, 1])
 
-with col1:
-    st.markdown("<div style='font-size:20px; font-weight:bold;'>📊 Component Breakdown & Evolution</div>", unsafe_allow_html=True)
+new_bank_margin=100-final_product_price_new_2
 
-    # Define pricing data
+with col1:
+    st.markdown("<div style='font-size:20px; font-weight:bold;'>📊 OptiLock 40 Pricing Breakdown & Evolution</div>", unsafe_allow_html=True)
+
     df_pricing = pd.DataFrame({
         "Component": [
             "One-Touch Digital (120%)",
@@ -1570,19 +1534,15 @@ with col1:
         ]
     })
 
-    # Ensure numeric format
     df_pricing["Initial Price (%)"] = pd.to_numeric(df_pricing["Initial Price (%)"], errors="coerce")
     df_pricing["Price in 1 year (%)"] = pd.to_numeric(df_pricing["Price in 1 year (%)"], errors="coerce")
 
-    # Compute price difference
     df_pricing["Change (%)"] = df_pricing["Price in 1 year (%)"] - df_pricing["Initial Price (%)"]
 
-    # Format for display
     df_pricing["Initial Price (%)"] = df_pricing["Initial Price (%)"].map(lambda x: f"{x:.2f}%")
     df_pricing["Price in 1 year (%)"] = df_pricing["Price in 1 year (%)"].map(lambda x: f"{x:.2f}%")
-    df_pricing["Change (%)"] = df_pricing["Change (%)"].map(lambda x: f"{x:+.2f}%")  # Keep numeric for styling
+    df_pricing["Change (%)"] = df_pricing["Change (%)"].map(lambda x: f"{x:+.2f}%")
 
-    # Define styling function for "Change (%)"
     def highlight_changes(val):
         try:
             val_num = float(val.replace("%", ""))
@@ -1591,29 +1551,39 @@ with col1:
         except:
             return ""
 
-    # Display table with styling
-    st.dataframe(df_pricing.style.map(highlight_changes, subset=["Change (%)"]), use_container_width=True)
+    st.dataframe(df_pricing.style.applymap(highlight_changes, subset=["Change (%)"]), use_container_width=True)
 
 with col2:
     st.markdown("<div style='font-size:20px; font-weight:bold;'>💰 Final Product Price in 1 year</div>", unsafe_allow_html=True)
-
     st.markdown(f"""
-        <div style="padding: 10px 30px; min-width: 280px; border-radius: 8px; border: 1px solid #008000; background-color: #e6f4ea; text-align: center;">
-            <h4 style="color: #008000; margin: 5px 0;">With ZCB</h4>
-            <h3 style="color: #008000; margin: 5px 0;"><strong>{final_product_price_new_2:.2f} %</strong></h3>
+        <div style="padding: 20px; margin-top: 15px; border-radius: 12px; border: 3px solid #008000; 
+                    background-color: #e6f4ea; text-align: center; font-size: 28px;">
+            <strong>{final_product_price_new_2:.2f} %</strong>
         </div>
     """, unsafe_allow_html=True)
+    
+    # Bank Margin Section
+    bank_margin_color = "#FF4500" if bank_margin < 0 else "#008000"
 
+    st.markdown(f"""
+        <div style="padding: 20px; margin-top: 20px; border-radius: 12px; border: 3px solid {bank_margin_color}; 
+                    background-color: #f8f9fa; text-align: center; font-size: 22px;">
+            🏦 <strong> New Bank Margin:</strong> 
+            <span style="font-weight: bold; color: {bank_margin_color};">
+                {new_bank_margin:.2f}%
+            </span>
+        </div>
+    """, unsafe_allow_html=True)
+   
 # =============================================================================
-# 🔹 Bid-Ask Spread Impact & Buyback Price (With Side Parameters)
+# Bid-Ask Spread Impact & Buyback Price
 # =============================================================================
-# Add a horizontal divider
+
 st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
-st.markdown("### 🏦 Bank Margin & Buyback Price Calculation")
+st.markdown("### 🏦 Bank Margin & Buyback Price")
 
 rate_shift = st.number_input("Rate Shift (bps)", value=4, step=1)
 vol_shift = st.number_input("Volatility Shift (%)", value=2.0, step=0.1)
-liquidity_penalty = st.number_input("Liquidity Penalty (%)", value=1.0, step=0.1)
 
 # Adjusted interest rates (shifting by ±4bp)
 ZC1_up = ZC1 + (rate_shift/10000)
@@ -1791,8 +1761,6 @@ final_product_price_down = (
 # Compute bid-ask prices
 P_bid = final_product_price_down
 P_ask = final_product_price_up
-P_buyback = P_bid - liquidity_penalty
-recommendation = "✅ Hold the product" if P_buyback > P_bid else "❌ Sell the product"
 
 st.markdown("---")
 
@@ -1804,7 +1772,8 @@ df_pricing_evolution = pd.DataFrame({
         "Knock-Out Call (100%, KO at 120%)",
         "Knock-Out Call (120%, KO at 150%)",
         "Vanilla Call (150%)",
-        "Zero Coupon Bond"
+        "Zero Coupon Bond",
+        "Total"
     ],
     "Initial Price (%)": [
         price_digital_10,
@@ -1812,7 +1781,8 @@ df_pricing_evolution = pd.DataFrame({
         price_call_ko_120,
         price_call_ko_150,
         price_vanilla_call,
-        zero_coupon_bond_price
+        zero_coupon_bond_price,
+        final_product_price,
     ],
     "Price in 1 year (%)": [
         price_digital_10_new_2,
@@ -1820,7 +1790,8 @@ df_pricing_evolution = pd.DataFrame({
         price_call_ko_120_new_2,
         price_call_ko_150_new_2,
         price_vanilla_call_new_2,
-        zero_coupon_bond_price_new_2
+        zero_coupon_bond_price_new_2,
+        final_product_price_new_2,
     ],
     "Adjusted Price (Bid)": [
         price_digital_10_down,
@@ -1828,7 +1799,8 @@ df_pricing_evolution = pd.DataFrame({
         price_call_ko_120_down,
         price_call_ko_150_down,
         price_vanilla_call_down,
-        zero_coupon_bond_price_down
+        zero_coupon_bond_price_down,
+        final_product_price_down,
     ],
     "Adjusted Price (Ask)": [
         price_digital_10_up,
@@ -1836,56 +1808,92 @@ df_pricing_evolution = pd.DataFrame({
         price_call_ko_120_up,
         price_call_ko_150_up,
         price_vanilla_call_up,
-        zero_coupon_bond_price_up
+        zero_coupon_bond_price_up,
+        final_product_price_up,
     ]
 })
-    
-# Convert to percentages
+
 df_pricing_evolution.set_index("Component", inplace=True)
+df_pricing_evolution = df_pricing_evolution.apply(pd.to_numeric, errors="coerce")
 
-# Plot in Streamlit
-st.markdown("### 📈 Pricing Evolution Before & After Rate/Volatility Shifts")
-st.dataframe(df_pricing_evolution.style.format("{:.2f}%"))
+# Compute Total Product Prices for each scenario
+total_initial_price = df_pricing_evolution["Initial Price (%)"].sum()-final_product_price
+total_price_new_2 = df_pricing_evolution["Price in 1 year (%)"].sum()-final_product_price_new_2
+total_price_bid = df_pricing_evolution["Adjusted Price (Bid)"].sum()-final_product_price_down
+total_price_ask = df_pricing_evolution["Adjusted Price (Ask)"].sum()-final_product_price_up
+
+col1, col2 = st.columns([3, 1])
+
+# Component Breakdown & Evolution
+with col1:
+    st.markdown("<div style='font-size:20px; font-weight:bold;'>📊 Component Breakdown & Evolution</div>", unsafe_allow_html=True)
+    st.dataframe(df_pricing_evolution.style.format("{:.2f}%"), use_container_width=True)
+
+with col2:
+    # Title
+    st.markdown("<div style='font-size:20px; font-weight:bold;'>💰 Product Prices</div>", unsafe_allow_html=True)
+
+    # Price in 1 Year
+    st.markdown(f"""
+        <div style="padding: 1px 1px; min-width: 60px; border-radius: 4px; 
+                    border: 1px solid black; background-color: #f7f7f7; text-align: center;
+                    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);">
+            <h4 style="color: black; font-size: 16px; margin: 0px 0; line-height: 1.2;">Price in 1 Year</h4>
+            <h3 style="color: black; font-size: 18px; margin: 0px 0;"><strong>{total_price_new_2:.2f}%</strong></h3>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Bid Price
+    color_bid = "#D90000" if total_price_bid < 100 else "#008000"
+    st.markdown(f"""
+        <div style="padding: 1px 1px; min-width: 60px; border-radius: 4px; 
+                    border: 1px solid {color_bid}; background-color: #f7f7f7; text-align: center;
+                    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);">
+            <h4 style="color: {color_bid}; font-size: 16px; margin: 0px 0; line-height: 1.2;">Bid Price</h4>
+            <h3 style="color: {color_bid}; font-size: 18px; margin: 0px 0;"><strong> {total_price_bid:.2f}%</strong></h3>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Ask Price
+    color_ask = "#008000" if total_price_ask > 100 else "#D90000"
+    st.markdown(f"""
+        <div style="padding: 1px 1px; min-width: 60px; border-radius: 4px; 
+                    border: 1px solid {color_ask}; background-color: #f7f7f7; text-align: center;
+                    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);">
+            <h4 style="color: {color_ask}; font-size: 16px; margin: 0px 0; line-height: 1.2;">Ask Price</h4>
+            <h3 style="color: {color_ask}; font-size: 18px; margin: 0px 0;"><strong> {total_price_ask:.2f}%</strong></h3>
+        </div>
+    """, unsafe_allow_html=True)
+
 st.markdown("---")
-
-# Section title
 st.markdown("## 💡 Investor Recommendation: Should You Hold or Sell?")
 
 # Explanation
 st.markdown("""
-In the secondary market, investors have two choices:
-- **Hold the product**: If the buyback price offered by the bank is close to or above the bid price, it might be beneficial to wait until maturity.
-- **Sell the product**: If the buyback price is significantly lower than the bid price, selling in the secondary market might be a better option.
-
-🔹 The **Bid Price** represents the price at which the market is willing to buy your structured product.  
-🔹 The **Buyback Price** is the price the bank offers to repurchase the product, usually applying a liquidity discount.
+Your investment started at **100%** of the nominal value. Now, based on market movements, the **current bid price** reflects how much you would get if you sold your structured product today.
 """)
 
-# Define recommendation message
-if P_buyback > P_bid:
-    st.success("✅ **Hold the product** – The bank’s buyback price is fair and close to the market bid price.")
+if P_bid > 100:
+    st.success(f"✅ **Sell the product** – The market bid price is **above 100%**, meaning you can exit with a profit.")
+elif P_bid < 100:
+    st.error(f"❌ **Hold the product** – The market bid price is **below 100%**, meaning selling now would result in a loss.")
 else:
-    st.error("❌ **Sell the product** – The bank's buyback price is significantly lower than the market bid price, indicating a poor repurchase offer.")
+    st.warning(f"⚖ **Neutral Decision** – The market bid price is exactly **100%**, so there is no financial gain or loss.")
 
-# Display buyback price
 st.metric(
-    label="📊 **Buyback Price** (Bank's Offer)",
-    value=f"{P_buyback:.2f}%",
-    delta=f"{P_buyback - P_bid:.2f}%",
-    delta_color="inverse"  # Green if positive, red if negative
+    label="📊 **Current Bid Price**",
+    value=f"{P_bid:.2f}%",
+    delta=f"{P_bid - 100:.2f}%",
+    delta_color="inverse"  
 )
 
-# Additional insights
 st.markdown("""
 💡 **Key Takeaways:**  
-- If the **buyback price is close to the bid price**, consider holding your product.  
-- If the **buyback price is significantly below the bid price**, selling in the secondary market might minimize losses.
-- **Market conditions and liquidity constraints** can influence the bank’s pricing strategy.
+- If **P_bid > 100%**, selling is advantageous as you are making a profit.  
+- If **P_bid < 100%**, holding could be preferable to avoid selling at a loss.  
 """)
 
 if __name__ == "__main__":
     st.write("🚀 Application Streamlit en cours d'exécution...")
-
-
 
 
