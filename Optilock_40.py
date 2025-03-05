@@ -27,13 +27,6 @@ st.markdown("""
     <hr style='border: 1px solid #555;'>
 """, unsafe_allow_html=True)
 
-st.markdown(
-    "<div style='text-align: right; font-size: 14px; color: gray;'>"
-    "Projet créé par : Mathis Delooze, Matthieu Lombardo et Youri Leconte</div>",
-    unsafe_allow_html=True
-)
-is_local = "is_local" in st.secrets
-
 
 # =============================================================================
 # Sidebar for User Inputs
