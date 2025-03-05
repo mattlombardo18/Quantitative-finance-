@@ -40,7 +40,7 @@ with st.sidebar:
         r = st.number_input("Risk-Free Rate (%)", value=4.55, min_value=0.0, max_value=10.0) / 100
         div = st.number_input("Dividend Level(%)", value=3.0, min_value=0.0, max_value=10.0)/100
         T = st.number_input("Maturity (Years)", value=3, min_value=1, max_value=10)
-        NSimul = st.number_input("Number of Simulations", value=5000, min_value=1000, max_value=500000, step=10000)
+        NSimul = st.number_input("Number of Simulations", value=1000, min_value=100, max_value=10000, step=250)
 
     with st.expander("🔹 Barrier & Participation Settings", expanded=True):
         barrier_10_pct = st.slider("Barrier Level 1 (%)", min_value=100, max_value=200, value=120, step=1)
