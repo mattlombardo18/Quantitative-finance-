@@ -1,4 +1,4 @@
-pillow==9.4.0 --prefer-binary
+
 streamlit==1.25.0
 numpy
 matplotlib
