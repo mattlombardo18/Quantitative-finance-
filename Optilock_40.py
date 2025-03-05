@@ -397,7 +397,7 @@ st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
 # Define a range of NSimul values to observe convergence
 # =============================================================================
 
-NSimul_values = np.logspace(2, np.log10(Nsimul), num=10, dtype=int)  # From 100 to 100,000
+NSimul_values = np.logspace(2, np.log10(NSimul), num=10, dtype=int)  # From 100 to 100,000
 
 # Storage for tracking convergence
 convergence_results = {
