@@ -1,7 +1,6 @@
 streamlit
 numpy 
 matplotlib
-matplotlib.pyplot 
 ScalarFormatter
 scipy.stats 
 norm
