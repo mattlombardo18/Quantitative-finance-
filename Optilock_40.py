@@ -181,7 +181,7 @@ paths_vanilla_call[:, 0] = S0
 Z = np.random.standard_normal((NSimul, N_steps))
 
 # Function to simulate paths with specific volatility
-@st.cache_data(ttl=24*3600)
+@st.cache_data(show_spinner=False)
 def simulate_paths(paths, r, vol, div):
     dW = vol * np.sqrt(dt) * Z
     drift = (r - div - 0.5 * vol**2) * dt
