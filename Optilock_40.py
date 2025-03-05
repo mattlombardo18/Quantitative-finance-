@@ -1101,7 +1101,7 @@ payoff_sample_df_new = payoff_df_new.head(MAX_ROWS_DISPLAY)
 
 payoff_sample_df_new = payoff_sample_df_new.map(lambda x: f"{x:.2f}")
 
-styled_payoff_df_new = payoff_sample_df_new.Styler.map(
+styled_payoff_df_new = payoff_sample_df_new.style.map(
     lambda x: 'background-color: #ffcccb' if float(x) > 0 else '', subset=["Total Payoff"]
 )
 
