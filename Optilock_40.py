@@ -1883,6 +1883,8 @@ st.markdown("""
 - **Market conditions and liquidity constraints** can influence the bank’s pricing strategy.
 """)
 
+if __name__ == "__main__":
+    st.write("🚀 Application Streamlit en cours d'exécution...")
 
 
 
