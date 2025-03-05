@@ -1883,4 +1883,6 @@ st.markdown("""
 
 
 
+if __name__ == "__main__":
+    st.write("🚀 Application Streamlit en cours d'exécution...")
 
