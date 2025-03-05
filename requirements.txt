@@ -5,6 +5,7 @@ scipy
 pandas
 yfinance
 plotly
+Pillow==9.5.0
 
 
 
