@@ -5,5 +5,4 @@ scipy
 pandas
 yfinance
 plotly
-gc
 
