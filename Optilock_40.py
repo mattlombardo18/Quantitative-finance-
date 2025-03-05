@@ -1893,5 +1893,7 @@ st.markdown("""
 - If **P_bid < 100%**, holding could be preferable to avoid selling at a loss.  
 """)
 
+if __name__ == "__main__":
+    st.write("🚀 Application Streamlit en cours d'exécution...")
 
 
