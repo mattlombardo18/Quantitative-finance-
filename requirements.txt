@@ -1,7 +1,5 @@
 streamlit
-numpy 
-matplotlib
-ScalarFormatter
-scipy.stats 
-norm
-pandas 
+numpy==1.23.5
+matplotlib==3.7.1
+scipy
+pandas
