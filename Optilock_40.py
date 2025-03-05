@@ -34,9 +34,7 @@ st.markdown(
 )
 is_local = "is_local" in st.secrets
 
-# Limiter le nombre de simulations si en ligne
-if not is_local:
-    NSimul = min(NSimul, 10000)  # Limite à 100k en cloud pour éviter le crash
+
 # =============================================================================
 # Sidebar for User Inputs
 # =============================================================================
@@ -66,6 +64,9 @@ with st.sidebar:
         """, unsafe_allow_html=True)
 
         Participation = 0.5
+# Limiter le nombre de simulations si en ligne
+if not is_local:
+    NSimul = min(NSimul, 10000)  # Limite à 100k en cloud pour éviter le crash
 
 # =============================================================================
 # Option Breakdown Table
