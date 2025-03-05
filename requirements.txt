@@ -1,3 +1,5 @@
+--prefer-binary
+Pillow==9.4.0
 streamlit==1.25.0
 numpy
 matplotlib
@@ -5,8 +7,4 @@ scipy
 pandas
 yfinance
 plotly
-Pillow==9.4.0
-pip==25.0.1
-
-
 
