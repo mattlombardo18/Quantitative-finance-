@@ -5,7 +5,7 @@ Created on Tue Feb 18 17:49:45 2025
 
 @author: mathisdelooze
 """
-pip install --prefer-binary Pillow==9.4.0
+
 
 import streamlit as st
 import numpy as np
