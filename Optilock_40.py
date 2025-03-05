@@ -16,11 +16,7 @@ from scipy.stats import norm
 from scipy.interpolate import RegularGridInterpolator
 
 
-st.markdown(
-    "<div style='text-align: right; font-size: 14px; color: gray;'>"
-    "Projet créé par : Mathis Delooze, Matthieu Lombardo et Youri Leconte</div>",
-    unsafe_allow_html=True
-)
+
 
 # =============================================================================
 # Streamlit Interface Setup
@@ -34,7 +30,11 @@ st.markdown("""
     <hr style='border: 1px solid #555;'>
 """, unsafe_allow_html=True)
 
-
+st.markdown(
+    "<div style='text-align: right; font-size: 14px; color: gray;'>"
+    "Projet créé par : Mathis Delooze, Matthieu Lombardo et Youri Leconte</div>",
+    unsafe_allow_html=True
+)
 # =============================================================================
 # Sidebar for User Inputs
 # =============================================================================
