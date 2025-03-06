@@ -1401,13 +1401,13 @@ col1, col2 = st.columns([2, 2])
 
 with col1:
     ZC1 = st.number_input(
-        "1year Risk-Free Rate (%)", 
+        "1 year Risk-Free Rate (%)", 
         value=3.75, min_value=0.00, max_value=10.00, step=0.01
     ) / 100
     
 with col2:
     ZC3 = st.number_input(
-        "3years Risk-Free Rate (%)", 
+        "3 years Risk-Free Rate (%)", 
         value=4.55, min_value=0.00, max_value=10.00, step=0.01
     ) / 100
 
