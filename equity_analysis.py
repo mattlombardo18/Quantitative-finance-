@@ -138,19 +138,9 @@ def get_stock_returns(ticker, years, interval, benchmark="^GSPC"):
     bench = yf.Ticker(benchmark).history(period=period, interval=interval)["Close"]
     return (stock.pct_change(), bench.pct_change())
 
-@st.cache_data(ttl=3600)
-@st.cache_data(ttl=3600)
+
 def get_ticker_info(ticker):
-    """Fetches financial information for the ticker via yfinance, with error handling."""
-    try:
-        info = yf.Ticker(ticker).info
-        if info is None or not info:
-            st.error(f"Unable to retrieve info for ticker {ticker}.")
-            return {}
-        return info
-    except Exception as e:
-        st.error(f"Error fetching ticker info for {ticker}: {e}")
-        return {}
+    return yf.Ticker(ticker).info
 
 
 # =============================================================================
