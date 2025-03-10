@@ -139,8 +139,27 @@ def get_stock_returns(ticker, years, interval, benchmark="^GSPC"):
     return (stock.pct_change(), bench.pct_change())
 
 
+@st.cache_data(ttl=3600)
 def get_ticker_info(ticker):
-    return yf.Ticker(ticker).info
+    """Fetches financial information for the ticker via yfinance, with custom headers and error handling."""
+    try:
+        # Création d'une session avec un User-Agent complet
+        session = requests.Session()
+        session.headers.update({
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                          "AppleWebKit/537.36 (KHTML, like Gecko) "
+                          "Chrome/92.0.4515.107 Safari/537.36"
+        })
+        # On injecte cette session dans yfinance
+        ticker_obj = yf.Ticker(ticker, session=session)
+        info = ticker_obj.info
+        if not info:
+            st.error(f"No data found for ticker {ticker}.")
+            return {}
+        return info
+    except Exception as e:
+        st.error(f"Error fetching ticker info for {ticker}: {e}")
+        return {}
 
 
 # =============================================================================
