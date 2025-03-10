@@ -186,3 +186,8 @@ plt.grid(True)
 st.pyplot(plt)
 plt.close()
 
+# 📌 Footer
+st.markdown("""
+    ---
+    📌 **Black & Scholes Pricer** | Created by [Matthieu Lombardo](https://www.linkedin.com/in/matthieu-lombardo)
+""", unsafe_allow_html=True)
