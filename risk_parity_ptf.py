@@ -113,11 +113,8 @@ with col4:
     st.markdown("**🏦 Total Debt:** Data Unavailable")
     st.markdown("**📊 Dividend Yield:** Data Unavailable")
 
-# End of Streamlit app
-st.write("🚀 Built with Streamlit & Plotly")
-
 # 📌 Footer
 st.markdown("""
     ---
-    📌 **Stock Market Dashboard** | Created by [Matthieu Lombardo](https://www.linkedin.com/in/matthieu-lombardo)
+    📌 **Risk Parity Portfolio Creation** | Created by [Matthieu Lombardo](https://www.linkedin.com/in/matthieu-lombardo)
 """, unsafe_allow_html=True)
