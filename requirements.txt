@@ -7,4 +7,5 @@ yfinance
 plotly
 lxml
 requests
+altair
 
