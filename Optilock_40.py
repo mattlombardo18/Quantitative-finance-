@@ -26,11 +26,7 @@ st.markdown("""
     <h4 style='text-align: center; color:gray;'>Combining Capital Security with Market Growth Potential</h4>
     <hr style='border: 1px solid #555;'>
 """, unsafe_allow_html=True)
-st.markdown("""
-    ---
-    📌 **Optilock 40 Pricer** | Created by [Matthieu Lombardo](https://www.linkedin.com/in/matthieu-lombardo), [Mathis De Looze](https://www.linkedin.com/in/mathis-de-looze), and [Youri Leconte](https://www.linkedin.com/in/youri-leconte)
-""", unsafe_allow_html=True)
-st.set_page_config(page_title="OptiLock 40 - Monte Carlo Pricing", layout="wide")
+
 
 # =============================================================================
 # Sidebar for User Inputs
@@ -65,6 +61,11 @@ with st.sidebar:
 # =============================================================================
 # Option Breakdown Table
 # =============================================================================
+st.markdown("""
+    ---
+    📌 **Optilock 40 Pricer** | Created by [Matthieu Lombardo](https://www.linkedin.com/in/matthieu-lombardo), [Mathis De Looze](https://www.linkedin.com/in/mathis-de-looze), and [Youri Leconte](https://www.linkedin.com/in/youri-leconte)
+""", unsafe_allow_html=True)
+st.set_page_config(page_title="OptiLock 40 - Monte Carlo Pricing", layout="wide")
 st.markdown("<h3> Option Composition of OptiLock 40</h3>", unsafe_allow_html=True)
 
 options_table = pd.DataFrame({
