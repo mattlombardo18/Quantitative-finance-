@@ -32,7 +32,7 @@ st.markdown("""
     </p>
 """, unsafe_allow_html=True)
 
-    st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
+st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
 
 # =============================================================================
 # Sidebar for User Inputs
