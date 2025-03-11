@@ -1898,6 +1898,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
-    st.write("🚀 Application Streamlit en cours d'exécution...")
+    st.write("🚀 Application Streamlit still running...")
 
 
