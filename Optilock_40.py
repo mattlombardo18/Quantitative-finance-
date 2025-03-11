@@ -1891,6 +1891,12 @@ st.markdown("""
 - If **P_bid < 100%**, holding could be preferable to avoid selling at a loss.  
 """)
 
+
+st.markdown("""
+    ---
+    📌 **Optilock 40 Pricer** | Created by [Matthieu Lombardo](https://www.linkedin.com/in/matthieu-lombardo), [Mathis De Looze](https://www.linkedin.com/in/mathis-de-looze), and [Youri Leconte](https://www.linkedin.com/in/youri-leconte)
+""", unsafe_allow_html=True)
+
 if __name__ == "__main__":
     st.write("🚀 Application Streamlit en cours d'exécution...")
 
