@@ -126,7 +126,11 @@ def compute_delta_smoothing_finite(S_SX5E, S_FX, r_EUR, r_USD, sigma_SX5E, sigma
 
 st.set_page_config(page_title="Monte-Carlo Pricing", layout="wide")
 st.markdown("<h1 style='text-align: center;'> Monte-Carlo Pricing of a Put Contingent Option</h1>", unsafe_allow_html=True)
+st.markdown("""
+     Created by [Matthieu Lombardo](https://www.linkedin.com/in/matthieu-lombardo) and [Mathis De Looze](https://www.linkedin.com/in/mathis-de-looze)
+""", unsafe_allow_html=True)
 st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
+
 
 # =============================================================================
 # Sidebar for Market Parameters
