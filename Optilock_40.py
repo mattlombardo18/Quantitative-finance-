@@ -24,7 +24,6 @@ st.set_page_config(page_title="OptiLock 40 - Monte Carlo Pricing", layout="wide"
 st.markdown("""
     <h1 style='text-align: center;'>🔒 OptiLock 40 - Monte Carlo Pricing Dashboard</h1>
     <h4 style='text-align: center; color: gray;'>Combining Capital Security with Market Growth Potential</h4>
-    <hr style='border: 1px solid #555;'>
     <p style='text-align: center; font-size: 18px;'>
         📌 <b>OptiLock 40 Pricer</b> | Created by 
         <a href='https://www.linkedin.com/in/matthieu-lombardo' target='_blank'>Matthieu Lombardo</a>, 
@@ -33,9 +32,7 @@ st.markdown("""
     </p>
 """, unsafe_allow_html=True)
 
-
-
-
+    st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
 
 # =============================================================================
 # Sidebar for User Inputs
