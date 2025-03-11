@@ -61,12 +61,6 @@ with st.sidebar:
 # =============================================================================
 # Option Breakdown Table
 # =============================================================================
-st.markdown("""
-    ---
-    📌 **Optilock 40 Pricer** | Created by [Matthieu Lombardo](https://www.linkedin.com/in/matthieu-lombardo), [Mathis De Looze](https://www.linkedin.com/in/mathis-de-looze), and [Youri Leconte](https://www.linkedin.com/in/youri-leconte)
-""", unsafe_allow_html=True)
-st.set_page_config(page_title="OptiLock 40 - Monte Carlo Pricing", layout="wide")
-st.markdown("<h3> Option Composition of OptiLock 40</h3>", unsafe_allow_html=True)
 
 options_table = pd.DataFrame({
     "Option Type": ["Vanilla Call Option", "One-Touch Digital Option", "One-Touch Digital Option", "Knock-Out Call Option", "Knock-Out Call Option"],
