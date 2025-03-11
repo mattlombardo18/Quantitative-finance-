@@ -25,12 +25,9 @@ st.markdown("""
     <h1 style='text-align: center;'>🔒 OptiLock 40 - Monte Carlo Pricing Dashboard</h1>
     <h4 style='text-align: center; color:gray;'>Combining Capital Security with Market Growth Potential</h4>
     <hr style='border: 1px solid #555;'>
+     📌 **Optilock 40 Pricer** | Created by [Matthieu Lombardo](https://www.linkedin.com/in/matthieu-lombardo), [Mathis De Looze](https://www.linkedin.com/in/mathis-de-looze), and [Youri Leconte](https://www.linkedin.com/in/youri-leconte)
 """, unsafe_allow_html=True)
 
-st.markdown("""
-    ---
-    📌 **Optilock 40 Pricer** | Created by [Matthieu Lombardo](https://www.linkedin.com/in/matthieu-lombardo), [Mathis De Looze](https://www.linkedin.com/in/mathis-de-looze), and [Youri Leconte](https://www.linkedin.com/in/youri-leconte)
-""", unsafe_allow_html=True)
 
 
 
