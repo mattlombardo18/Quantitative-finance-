@@ -19,6 +19,10 @@ import gc
 # =============================================================================
 # Streamlit Interface Setup
 # =============================================================================
+st.markdown("""
+    ---
+    📌 **Optilock 40 Pricer** | Created by [Matthieu Lombardo](https://www.linkedin.com/in/matthieu-lombardo), [Mathis De Looze](https://www.linkedin.com/in/mathis-de-looze), and [Youri Leconte](https://www.linkedin.com/in/youri-leconte)
+""", unsafe_allow_html=True)
 st.set_page_config(page_title="OptiLock 40 - Monte Carlo Pricing", layout="wide")
 
 st.markdown("""
@@ -1892,10 +1896,7 @@ st.markdown("""
 """)
 
 
-st.markdown("""
-    ---
-    📌 **Optilock 40 Pricer** | Created by [Matthieu Lombardo](https://www.linkedin.com/in/matthieu-lombardo), [Mathis De Looze](https://www.linkedin.com/in/mathis-de-looze), and [Youri Leconte](https://www.linkedin.com/in/youri-leconte)
-""", unsafe_allow_html=True)
+
 
 if __name__ == "__main__":
     st.write("🚀 Application Streamlit still running...")
