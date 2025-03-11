@@ -108,10 +108,10 @@ with col3:
     st.markdown(f"**🔄 Sortino Ratio:** {(portfolio_returns.mean() * window_size - avg_risk_free_rate) / (portfolio_returns[portfolio_returns < 0].std() * np.sqrt(window_size)):.2f}")
 
 with col4:
+    st.markdown(f"**🔄 Sortino Ratio:** {(portfolio_returns.mean() * window_size - avg_risk_free_rate) / (portfolio_returns[portfolio_returns < 0].std() * np.sqrt(window_size)):.2f}"
     st.markdown(f"**📉 Calmar Ratio:** {(portfolio_returns.mean() * window_size) / abs(max_drawdown):.2f}")
     st.markdown(f"**📉 Max Drawdown:** {max_drawdown:.2%}")
-    st.markdown("**🏦 Total Debt:** Data Unavailable")
-    st.markdown("**📊 Dividend Yield:** Data Unavailable")
+    
 
 # 📌 Footer
 st.markdown("""
