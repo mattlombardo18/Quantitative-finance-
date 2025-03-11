@@ -175,6 +175,7 @@ S1, S2 = MC.get_MC_distribution()
 # =============================================================================
 # Simulation Verification and Asset Prices Summary
 # =============================================================================
+st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
 st.markdown("<h3 style='text-align: center;'>📊 Monte-Carlo Simulation Verification</h1>", unsafe_allow_html=True)
 st.markdown("<hr style='border: 1px solid #555;'>", unsafe_allow_html=True)
 
