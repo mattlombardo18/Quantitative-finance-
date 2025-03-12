@@ -5,7 +5,7 @@ import yfinance as yf
 import streamlit as st
 from scipy.stats import norm
 import plotly.graph_objects as go
-import streamlit.components.v1 as components
+
 
 # =============================================================================
 # Class Definitions
