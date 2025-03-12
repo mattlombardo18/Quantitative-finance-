@@ -5,7 +5,8 @@ import yfinance as yf
 import streamlit as st
 from scipy.stats import norm
 import plotly.graph_objects as go
-import pdfkit
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
 
 # =============================================================================
 # Class Definitions
@@ -121,30 +122,24 @@ def compute_delta_smoothing_finite(S_SX5E, S_FX, r_EUR, r_USD, sigma_SX5E, sigma
         delta_FX *= 0.5
     return delta_SX5E, delta_FX
 def generate_dashboard_pdf():
-    # Build a simple HTML string for your dashboard.
-    # You can customize this HTML to reflect your dashboard content.
-    html = """
-    <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Monte-Carlo Pricing Dashboard</title>
-        <style>
-            body { font-family: Arial, sans-serif; margin: 40px; }
-            h1 { text-align: center; }
-            p { text-align: center; }
-        </style>
-    </head>
-    <body>
-        <h1>Monte-Carlo Pricing Dashboard</h1>
-        <p>This PDF contains the dashboard details.</p>
-        <!-- You can add more dynamic content here or generate HTML from your data -->
-    </body>
-    </html>
-    """
-    # Convert HTML to PDF.
-    # The second parameter "False" makes pdfkit return the PDF as a byte string.
-    pdf = pdfkit.from_string(html, False)
-    return pdf
+    buffer = BytesIO()
+    p = canvas.Canvas(buffer, pagesize=letter)
+    width, height = letter
+
+    # Draw text – customize this with your actual dashboard content
+    p.setFont("Helvetica-Bold", 16)
+    p.drawString(100, height - 100, "Monte-Carlo Pricing Dashboard")
+    p.setFont("Helvetica", 12)
+    p.drawString(100, height - 130, "This PDF contains the dashboard details.")
+    
+    # You can add more elements like images, tables, etc.
+    p.showPage()
+    p.save()
+
+    pdf_data = buffer.getvalue()
+    buffer.close()
+    return pdf_data
+
 # =============================================================================
 # Streamlit Interface Setup
 # =============================================================================
@@ -1006,7 +1001,7 @@ else:
     st.dataframe(pnl_summary_strategies.style.format({"Final P&L (EUR)": "{:,.2f}"}), width=500)
 pdf_data = generate_dashboard_pdf()
 
-# Create a download button in Streamlit.
+# Provide a download button in Streamlit
 st.download_button(
     label="Download Dashboard as PDF",
     data=pdf_data,
