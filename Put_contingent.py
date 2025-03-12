@@ -985,7 +985,12 @@ else:
 print_button_code = """
 <script>
 function printPage() {
-  window.print();
+  // Attempt to print the top-level window
+  if (window.parent) {
+    window.parent.print();
+  } else {
+    window.print();
+  }
 }
 </script>
 <button onClick="printPage()" 
@@ -995,3 +1000,4 @@ function printPage() {
 """
 
 st.markdown(print_button_code, unsafe_allow_html=True)
+
