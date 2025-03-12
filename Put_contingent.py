@@ -982,23 +982,5 @@ else:
     })
     st.dataframe(pnl_summary_strategies.style.format({"Final P&L (EUR)": "{:,.2f}"}), width=500)
     
-print_button_code = """
-<script>
-function printPage() {
-  // Attempt to call the top-level window's print
-  if (window.parent) {
-    window.parent.print();
-  } else {
-    window.print();
-  }
-}
-</script>
-<button onclick="printPage()" style="padding: 10px 20px; font-size: 16px;">
-  Print Dashboard
-</button>
-"""
-
-import streamlit as st
-st.markdown(print_button_code, unsafe_allow_html=True)
 
 
