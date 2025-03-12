@@ -985,7 +985,7 @@ else:
 print_button_code = """
 <script>
 function printPage() {
-  // Attempt to print the top-level window
+  // Attempt to call the top-level window's print
   if (window.parent) {
     window.parent.print();
   } else {
@@ -993,11 +993,12 @@ function printPage() {
   }
 }
 </script>
-<button onClick="printPage()" 
-        style="padding: 10px 20px; font-size: 16px; cursor: pointer;">
+<button onclick="printPage()" style="padding: 10px 20px; font-size: 16px;">
   Print Dashboard
 </button>
 """
 
+import streamlit as st
 st.markdown(print_button_code, unsafe_allow_html=True)
+
 
