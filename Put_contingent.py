@@ -982,14 +982,16 @@ else:
     })
     st.dataframe(pnl_summary_strategies.style.format({"Final P&L (EUR)": "{:,.2f}"}), width=500)
     
-components.html(
-    """
-    <div style="text-align: center; margin: 20px;">
-        <button onclick="window.print()" 
-                style="padding: 10px 20px; font-size: 16px; cursor: pointer;">
-            Print Dashboard
-        </button>
-    </div>
-    """,
-    height=100,
-)
+print_button_code = """
+<script>
+function printPage() {
+  window.print();
+}
+</script>
+<button onClick="printPage()" 
+        style="padding: 10px 20px; font-size: 16px; cursor: pointer;">
+  Print Dashboard
+</button>
+"""
+
+st.markdown(print_button_code, unsafe_allow_html=True)
