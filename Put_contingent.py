@@ -7,7 +7,7 @@ from scipy.stats import norm
 import plotly.graph_objects as go
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
-
+from io import BytesIO
 # =============================================================================
 # Class Definitions
 # =============================================================================
