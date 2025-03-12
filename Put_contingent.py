@@ -5,9 +5,7 @@ import yfinance as yf
 import streamlit as st
 from scipy.stats import norm
 import plotly.graph_objects as go
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
-from io import BytesIO
+
 # =============================================================================
 # Class Definitions
 # =============================================================================
@@ -121,24 +119,7 @@ def compute_delta_smoothing_finite(S_SX5E, S_FX, r_EUR, r_USD, sigma_SX5E, sigma
         delta_SX5E *= 0.5
         delta_FX *= 0.5
     return delta_SX5E, delta_FX
-def generate_dashboard_pdf():
-    buffer = BytesIO()
-    p = canvas.Canvas(buffer, pagesize=letter)
-    width, height = letter
 
-    # Draw text – customize this with your actual dashboard content
-    p.setFont("Helvetica-Bold", 16)
-    p.drawString(100, height - 100, "Monte-Carlo Pricing Dashboard")
-    p.setFont("Helvetica", 12)
-    p.drawString(100, height - 130, "This PDF contains the dashboard details.")
-    
-    # You can add more elements like images, tables, etc.
-    p.showPage()
-    p.save()
-
-    pdf_data = buffer.getvalue()
-    buffer.close()
-    return pdf_data
 
 # =============================================================================
 # Streamlit Interface Setup
@@ -999,12 +980,15 @@ else:
         ]
     })
     st.dataframe(pnl_summary_strategies.style.format({"Final P&L (EUR)": "{:,.2f}"}), width=500)
-pdf_data = generate_dashboard_pdf()
-
-# Provide a download button in Streamlit
-st.download_button(
-    label="Download Dashboard as PDF",
-    data=pdf_data,
-    file_name="dashboard.pdf",
-    mime="application/pdf"
+    
+components.html(
+    """
+    <div style="text-align: center; margin: 20px;">
+        <button onclick="window.print()" 
+                style="padding: 10px 20px; font-size: 16px; cursor: pointer;">
+            Print Dashboard
+        </button>
+    </div>
+    """,
+    height=100,
 )
