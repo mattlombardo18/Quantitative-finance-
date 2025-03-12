@@ -5,6 +5,7 @@ import yfinance as yf
 import streamlit as st
 from scipy.stats import norm
 import plotly.graph_objects as go
+import pdfkit
 
 # =============================================================================
 # Class Definitions
