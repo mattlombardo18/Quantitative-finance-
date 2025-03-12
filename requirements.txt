@@ -9,3 +9,4 @@ lxml
 requests
 altair
 pdfkit
+reportlab
